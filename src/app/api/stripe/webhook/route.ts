@@ -79,23 +79,7 @@ export async function POST(req: Request) {
       console.warn("RESEND_API_KEY is missing. Email notification was not sent.");
       return NextResponse.json({ received: true, warning: "Missing RESEND_API_KEY" });
     }
-    const customerEmail =
-      paymentIntent.receipt_email ||
-      paymentIntent.metadata.customer_email;
-
-    console.log("Customer email:", customerEmail);
-
-const result = await resend.emails.send({
-  from: orderNotificationFrom,
-  to: [
-    orderNotificationEmail,
-    ...(customerEmail ? [customerEmail] : []),
-  ],
-  subject,
-  text: textBody,
-  html: htmlBody,
-});
-}
+    await resend.emails.send({ from: orderNotificationFrom, to: [orderNotificationEmail], subject, text: textBody, html: htmlBody, }); }
 console.log("Resend result:", result);
   }
 
