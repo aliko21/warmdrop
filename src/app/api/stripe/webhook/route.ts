@@ -95,7 +95,7 @@ const result = await resend.emails.send({
   text: textBody,
   html: htmlBody,
 });
-
+}
 console.log("Resend result:", result);
   }
 
