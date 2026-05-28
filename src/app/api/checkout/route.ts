@@ -76,6 +76,7 @@ export async function POST(req: Request) {
       metadata: {
         customer_name: body.name,
         customer_phone: normalizedPhone,
+        customer_email: body.email,
         street_address: body.address,
         emirate: body.emirate,
         selected_color: colorLabel,
