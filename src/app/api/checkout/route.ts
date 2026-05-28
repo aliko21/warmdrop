@@ -7,7 +7,10 @@ if (!stripeSecretKey) {
   console.warn("Missing STRIPE_SECRET_KEY environment variable.");
 }
 
+
 const stripe = new Stripe(stripeSecretKey ?? "");
+
+
 
 type CheckoutPayload = {
   qty: number;
@@ -19,10 +22,16 @@ type CheckoutPayload = {
   emirate: string;
 };
 
-const uaePhonePattern = /^(?:\+971|00971|0)?5[024568]\d{7}$/;
+const uaePhonePattern = /^(?:\+971|00971|0)?5\d{8}$/;
+
+function normalizeDigits(input: string) {
+  return input
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+}
 
 function normalizeUaePhone(phone: string) {
-  const cleaned = phone.replace(/\s+/g, "");
+  const cleaned = normalizeDigits(phone).replace(/\s+/g, "");
   if (!uaePhonePattern.test(cleaned)) return null;
 
   if (cleaned.startsWith("+971")) return cleaned;
@@ -67,6 +76,7 @@ export async function POST(req: Request) {
       metadata: {
         customer_name: body.name,
         customer_phone: normalizedPhone,
+        customer_email: body.email,
         street_address: body.address,
         emirate: body.emirate,
         selected_color: colorLabel,
