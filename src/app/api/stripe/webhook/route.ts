@@ -8,7 +8,9 @@ const resendApiKey = process.env.RESEND_API_KEY;
 const orderNotificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "rooteone048@gmail.com";
 const orderNotificationFrom = process.env.ORDER_NOTIFICATION_FROM || "WarmDrop <onboarding@resend.dev>";
 
-const stripe = new Stripe(stripeSecretKey ?? "");
+const stripe = new Stripe(stripeSecretKey ?? "", {
+  apiVersion: "2026-05-27.dahlia",
+});
 
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
@@ -79,8 +81,14 @@ export async function POST(req: Request) {
       console.warn("RESEND_API_KEY is missing. Email notification was not sent.");
       return NextResponse.json({ received: true, warning: "Missing RESEND_API_KEY" });
     }
-    await resend.emails.send({ from: orderNotificationFrom, to: [orderNotificationEmail], subject, text: textBody, html: htmlBody, }); }
-console.log("Resend result:", result);
+
+    await resend.emails.send({
+      from: orderNotificationFrom,
+      to: [orderNotificationEmail],
+      subject,
+      text: textBody,
+      html: htmlBody,
+    });
   }
 
   return NextResponse.json({ received: true });
