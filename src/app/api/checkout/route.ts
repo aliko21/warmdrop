@@ -10,9 +10,7 @@ if (!stripeSecretKey) {
 
 const stripe = new Stripe(stripeSecretKey ?? "");
 
-const stripe = new Stripe(stripeSecretKey ?? "", {
-  apiVersion: "2026-05-27.dahlia",
-});
+
 
 
 type CheckoutPayload = {
