@@ -3,19 +3,58 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Play, Pause } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
-const points = [
-  "تصميم يجمع بين الجمال والوظيفة",
-  "إضاءة LED دافئة تخلق أجواء هادئة",
-  "سهل الاستخدام والتركيب في دقائق",
-  "يناسب جميع أنواع ديكورات المنازل",
-];
+const videoText = {
+  ar: {
+    eyebrow: "شاهد الفرق",
+    title: "شاهد التجربة",
+    description:
+      "خطوات بسيطة لتحويل قنينة الماء إلى قطعة ديكور أنيقة. شاهد كيف يتحول المنتج إلى تحفة فنية في منزلك.",
+    points: [
+      "تصميم يجمع بين الجمال والوظيفة",
+      "إضاءة LED دافئة تخلق أجواء هادئة",
+      "سهل الاستخدام والتركيب في دقائق",
+      "يناسب جميع أنواع ديكورات المنازل",
+    ],
+    watch: "شاهد الفيديو",
+  },
+  en: {
+    eyebrow: "SEE THE DIFFERENCE",
+    title: "Watch the experience",
+    description:
+      "Simple steps to transform your water bottle into an elegant decor piece. See how it upgrades your home corner.",
+    points: [
+      "A design that balances beauty and function",
+      "Warm LED glow for a calm atmosphere",
+      "Easy setup in just minutes",
+      "Fits all modern home styles",
+    ],
+    watch: "Watch Video",
+  },
+  sv: {
+    eyebrow: "SE SKILLNADEN",
+    title: "Se upplevelsen",
+    description:
+      "Enkla steg som forvandlar vattenflaskan till en elegant inredningsdetalj i ditt hem.",
+    points: [
+      "Design som kombinerar estetik och funktion",
+      "Varm LED-belysning for lugn atmosfar",
+      "Enkel installation pa nagra minuter",
+      "Passar olika typer av heminredning",
+    ],
+    watch: "Se Video",
+  },
+} as const;
 
 export default function VideoSection() {
   const [playing, setPlaying] = useState(false);
   const sectionRef = useRef(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const { locale } = useLanguage();
+  const text = videoText[locale];
+  const textAlign = locale === "ar" ? "text-right" : "text-left";
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -102,22 +141,21 @@ export default function VideoSection() {
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="text-right"
+            className={textAlign}
           >
             <p className="text-primary text-xs font-bold uppercase tracking-[0.3em] mb-4">
-              شاهد الفرق
+              {text.eyebrow}
             </p>
             <div className="w-10 h-0.5 bg-primary mr-0 mb-6" />
             <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-6 leading-tight">
-              شاهد التجربة
+              {text.title}
             </h2>
             <p className="text-white/60 text-base leading-relaxed mb-10">
-              خطوات بسيطة لتحويل قنينة الماء إلى قطعة ديكور أنيقة. شاهد كيف
-              يتحول المنتج إلى تحفة فنية في منزلك.
+              {text.description}
             </p>
 
             <ul className="space-y-4 mb-10">
-              {points.map((point, i) => (
+              {text.points.map((point, i) => (
                 <motion.li
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
@@ -138,7 +176,7 @@ export default function VideoSection() {
               className="flex items-center gap-3 bg-primary/15 hover:bg-primary/25 border border-primary/30 text-primary font-semibold px-6 py-3 rounded-full transition-all duration-300 mr-auto"
             >
               <Play size={15} className="fill-primary" />
-              شاهد الفيديو
+              {text.watch}
             </button>
           </motion.div>
         </div>

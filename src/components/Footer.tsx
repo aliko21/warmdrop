@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Phone, Instagram, Mail } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-brand text-white/80" id="contact">
       <div className="max-w-7xl mx-auto px-6 py-16">
@@ -28,8 +33,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-white/55 leading-relaxed mb-6">
-              تصميم عصري فاخر يحوّل زاوية الماء في منزلك إلى قطعة ديكور
-              أنيقة.
+              {String(t("footer.brandText"))}
             </p>
             {/* Social Icons */}
             <div className="flex gap-3">
@@ -70,14 +74,14 @@ export default function Footer() {
           {/* Pages */}
           <div>
             <h3 className="text-white font-semibold mb-5 text-sm tracking-wider uppercase">
-              الصفحات
+              {String(t("footer.pages"))}
             </h3>
             <ul className="space-y-3">
               {[
-                { label: "الرئيسية", href: "/" },
-                { label: "المنتج", href: "/product" },
-                { label: "المميزات", href: "/#features" },
-                { label: "آراء العملاء", href: "/#reviews" },
+                { label: String(t("footer.home")), href: "/" },
+                { label: String(t("footer.product")), href: "/product" },
+                { label: String(t("footer.features")), href: "/#features" },
+                { label: String(t("footer.reviews")), href: "/#reviews" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link
@@ -94,21 +98,20 @@ export default function Footer() {
           {/* Policies */}
           <div>
             <h3 className="text-white font-semibold mb-5 text-sm tracking-wider uppercase">
-              السياسات
+              {String(t("footer.policies"))}
             </h3>
             <ul className="space-y-3">
               {[
-                "سياسة الخصوصية",
-                "شروط الاستخدام",
-                "سياسة الإرجاع",
-                "الشحن والتوصيل",
+                { label: String(t("footer.privacyPolicy")), href: "/privacy-policy" },
+                { label: String(t("footer.refundPolicy")), href: "/refund-policy" },
+                { label: String(t("footer.shippingDelivery")), href: "/shipping-delivery" },
               ].map((item) => (
-                <li key={item}>
+                <li key={item.href}>
                   <Link
-                    href="#"
+                    href={item.href}
                     className="text-sm text-white/55 hover:text-primary transition-colors duration-300"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -118,7 +121,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-white font-semibold mb-5 text-sm tracking-wider uppercase">
-              تواصل معنا
+              {String(t("footer.contact"))}
             </h3>
             <div className="space-y-4">
               <a
@@ -128,7 +131,7 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                   <Phone size={14} />
                 </div>
-                واتساب: +971568685828
+                {String(t("footer.whatsapp"))}: +971568685828
               </a>
               <a
                 href="mailto:hello@warmdrop.ae"
@@ -140,7 +143,7 @@ export default function Footer() {
                 hello@warmdrop.ae
               </a>
               <p className="text-xs text-white/35 mt-2">
-                الدعم متاح 24/7 عبر واتساب
+                {String(t("footer.support247"))}
               </p>
             </div>
           </div>
@@ -151,10 +154,10 @@ export default function Footer() {
       <div className="border-t border-white/8">
         <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
           <p className="text-xs text-white/35">
-            © 2024 WarmDrop. جميع الحقوق محفوظة.
+            {String(t("footer.rights"))}
           </p>
           <p className="text-xs text-white/35">
-            تصميم دافئ وفاخر لكل منزل
+            {String(t("footer.tagline"))}
           </p>
         </div>
       </div>

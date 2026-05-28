@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, ZoomIn, Play, X } from "lucide-react";
+import { useLanguage } from "@/components/LanguageProvider";
 
 type MediaItem =
   | { type: "image"; src: string; alt: string }
@@ -53,6 +54,7 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
+  const { locale } = useLanguage();
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -69,6 +71,15 @@ export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
 
   const prev = () => setActive((i) => (i - 1 + totalItems) % totalItems);
   const next = () => setActive((i) => (i + 1) % totalItems);
+  const labels = {
+    prev: locale === "ar" ? "السابق" : locale === "sv" ? "Foregaende" : "Previous",
+    next: locale === "ar" ? "التالي" : locale === "sv" ? "Nasta" : "Next",
+    zoom: locale === "ar" ? "تكبير" : locale === "sv" ? "Zooma" : "Zoom",
+    close: locale === "ar" ? "إغلاق" : locale === "sv" ? "Stang" : "Close",
+    videoAlt: locale === "ar" ? "فيديو المنتج" : locale === "sv" ? "Produktvideo" : "Product video",
+  };
+
+  const activeAlt = activeItem.type === "video" ? labels.videoAlt : activeItem.alt;
 
   return (
     <div className="space-y-4">
@@ -121,14 +132,14 @@ export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
         <button
           onClick={prev}
           className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary/20 z-10"
-          aria-label="السابق"
+          aria-label={labels.prev}
         >
           <ChevronRight size={16} className="text-brand" />
         </button>
         <button
           onClick={next}
           className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary/20 z-10"
-          aria-label="التالي"
+          aria-label={labels.next}
         >
           <ChevronLeft size={16} className="text-brand" />
         </button>
@@ -138,7 +149,7 @@ export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
           <button
             onClick={() => setLightbox(true)}
             className="absolute top-4 left-4 w-9 h-9 rounded-full glass flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-primary/20 z-10"
-            aria-label="تكبير"
+            aria-label={labels.zoom}
           >
             <ZoomIn size={15} className="text-brand" />
           </button>
@@ -203,7 +214,7 @@ export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
             <button
               onClick={(e) => { e.stopPropagation(); setLightbox(false); }}
               className="absolute top-6 right-6 w-10 h-10 rounded-full glass-dark flex items-center justify-center text-white hover:bg-white/10 transition z-10"
-              aria-label="إغلاق"
+              aria-label={labels.close}
             >
               <X size={18} />
             </button>
@@ -216,7 +227,7 @@ export default function ProductGallery({ selectedColor }: ProductGalleryProps) {
             >
               <img
                 src={activeItem.src}
-                alt={activeItem.alt}
+                alt={activeAlt}
                 className="max-w-full max-h-[85vh] w-auto h-auto rounded-2xl object-contain shadow-2xl"
               />
             </motion.div>

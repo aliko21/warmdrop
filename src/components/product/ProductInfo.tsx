@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { CardElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useLanguage } from "@/components/LanguageProvider";
 import {
   Loader2,
   CreditCardIcon,
@@ -18,35 +19,158 @@ import {
   CreditCard,
 } from "lucide-react";
 
-const features = [
-  "أجمل تصميم يناسب جميع الديكورات",
-  "غطاء قماشي ناعم فاخر",
-  "إضاءة LED دافئة سفلية",
-  "رف سفلي للأكواب والديكور",
-  "متوافق مع قناني 5 جالون",
-];
+const localized = {
+  ar: {
+    breadcrumb: ["الرئيسية", "المنتج", "استاند ماء فاخر"],
+    reviews: "(523 تقييم)",
+    title: "استاند ماء فاخر",
+    titleAccent: "بتصميم دافئ وإضاءة LED",
+    desc: "تصميم عصري فاخر يخفي قنينة الماء بطريقة أنيقة ويحولها إلى قطعة ديكور راقية تناسب المنازل الحديثة.",
+    countdownTitle: "⚡ عرض محدود الوقت",
+    countdownDesc: "ينتهي العرض قريباً - لا تفوت الفرصة!",
+    whatsapp: "اطلب عبر واتساب",
+    payByCard: "دفع بالبطاقة",
+    discount: "خصم 55%",
+    currency: "درهم",
+    features: [
+      "أجمل تصميم يناسب جميع الديكورات",
+      "غطاء قماشي ناعم فاخر",
+      "إضاءة LED دافئة سفلية",
+      "رف سفلي للأكواب والديكور",
+      "متوافق مع قناني 5 جالون",
+    ],
+    colorLabel: "اللون",
+    quantity: "الكمية",
+    trust: [
+      { icon: Truck, title: "شحن مجاني", desc: "داخل الإمارات" },
+      { icon: Shield, title: "ضمان 6 أشهر", desc: "على المنتج" },
+      { icon: CreditCard, title: "دفع آمن", desc: "بطاقة بنكية" },
+    ],
+    modalTitle: "إتمام الدفع",
+    modalSub: "أدخل بياناتك وسيتم الدفع داخل الموقع مباشرة",
+    fullName: "الاسم الكامل",
+    phone: "رقم الهاتف",
+    email: "البريد الإلكتروني",
+    address: "العنوان",
+    emirate: "الإمارة",
+    chooseEmirate: "اختر الإمارة",
+    cardInfo: "أدخل بيانات البطاقة مباشرة لإتمام الدفع داخل الموقع بدون تحويل.",
+    continuePayment: "متابعة الدفع",
+    preparing: "جاري تجهيز الدفع...",
+    cardStepTitle: "أكمل بيانات البطاقة مباشرة من داخل الموقع.",
+    editCustomer: "تعديل بيانات العميل",
+    successTitle: "تم الدفع بنجاح",
+    successText: "تم إرسال إيميل التأكيد بنجاح. شكرا لطلبك، وسيتم التواصل معك قريبا.",
+    great: "ممتاز",
+    invalidPhone: "رقم الهاتف يجب أن يكون رقما إماراتيا صحيحا (مثال: 0501234567 أو +971501234567).",
+    invalidPhoneSmall: "رقم غير صالح. استخدم رقم إماراتي فقط.",
+    missingPk: "أضف NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY في ملف البيئة لتفعيل الدفع داخل الموقع.",
+    emirates: ["أبوظبي", "دبي", "الشارقة", "عجمان", "أم القيوين", "رأس الخيمة", "الفجيرة"],
+    colors: ["خشبي", "أبيض", "أسود"],
+  },
+  en: {
+    breadcrumb: ["Home", "Product", "Luxury Water Stand"],
+    reviews: "(523 reviews)",
+    title: "Luxury Water Stand",
+    titleAccent: "Warm Design with LED Lighting",
+    desc: "A premium modern design that elegantly hides your water bottle and upgrades your home decor.",
+    countdownTitle: "⚡ Limited Time Offer",
+    countdownDesc: "Offer ending soon - don't miss out!",
+    whatsapp: "Order via WhatsApp",
+    payByCard: "Pay by Card",
+    discount: "55% OFF",
+    currency: "AED",
+    features: [
+      "Elegant design for all interiors",
+      "Premium soft fabric cover",
+      "Warm under LED lighting",
+      "Lower shelf for cups and decor",
+      "Compatible with 5-gallon bottles",
+    ],
+    colorLabel: "Color",
+    quantity: "Quantity",
+    trust: [
+      { icon: Truck, title: "Free Shipping", desc: "Inside UAE" },
+      { icon: Shield, title: "6-Month Warranty", desc: "On product" },
+      { icon: CreditCard, title: "Secure Payment", desc: "Bank card" },
+    ],
+    modalTitle: "Complete Payment",
+    modalSub: "Enter your details and complete payment directly on site",
+    fullName: "Full Name",
+    phone: "Phone Number",
+    email: "Email",
+    address: "Address",
+    emirate: "Emirate",
+    chooseEmirate: "Select Emirate",
+    cardInfo: "Enter your card details directly to complete payment without redirect.",
+    continuePayment: "Continue Payment",
+    preparing: "Preparing payment...",
+    cardStepTitle: "Complete your card details directly on this site.",
+    editCustomer: "Edit customer details",
+    successTitle: "Payment Successful",
+    successText: "Confirmation email was sent successfully. Thank you for your order.",
+    great: "Great",
+    invalidPhone: "Phone number must be a valid UAE number (e.g. 0501234567 or +971501234567).",
+    invalidPhoneSmall: "Invalid number. Use a UAE phone number only.",
+    missingPk: "Add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in environment variables.",
+    emirates: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah"],
+    colors: ["Wooden", "White", "Black"],
+  },
+  sv: {
+    breadcrumb: ["Hem", "Produkt", "Lyxigt Vattenstall"],
+    reviews: "(523 omdomen)",
+    title: "Lyxigt Vattenstall",
+    titleAccent: "Varm Design med LED-belysning",
+    desc: "En premium modern design som döljer vattenflaskan elegant och forhojer hemmets inredning.",
+    countdownTitle: "⚡ Begransat erbjudande",
+    countdownDesc: "Erbjudandet slutar snart - missa inte!",
+    whatsapp: "Bestall via WhatsApp",
+    payByCard: "Betala med kort",
+    discount: "55% RABATT",
+    currency: "AED",
+    features: [
+      "Elegant design for alla inredningar",
+      "Mjukt premiumtyg",
+      "Varm LED-belysning nedtill",
+      "Nedre hylla for muggar och dekor",
+      "Kompatibel med 5-gallonflaskor",
+    ],
+    colorLabel: "Farg",
+    quantity: "Antal",
+    trust: [
+      { icon: Truck, title: "Fri frakt", desc: "Inom FAE" },
+      { icon: Shield, title: "6 man garanti", desc: "Pa produkten" },
+      { icon: CreditCard, title: "Saker betalning", desc: "Bankkort" },
+    ],
+    modalTitle: "Slutfor betalning",
+    modalSub: "Fyll i dina uppgifter och betala direkt pa sidan",
+    fullName: "Fullstandigt namn",
+    phone: "Telefonnummer",
+    email: "E-post",
+    address: "Adress",
+    emirate: "Emirat",
+    chooseEmirate: "Valj emirat",
+    cardInfo: "Ange kortuppgifter direkt for att slutföra betalning utan omdirigering.",
+    continuePayment: "Fortsatt betalning",
+    preparing: "Forbereder betalning...",
+    cardStepTitle: "Fyll i kortuppgifter direkt pa sidan.",
+    editCustomer: "Andra kunduppgifter",
+    successTitle: "Betalning lyckades",
+    successText: "Bekraftelsemail skickades. Tack for din bestallning.",
+    great: "Toppen",
+    invalidPhone: "Telefonnumret maste vara ett giltigt UAE-nummer (t.ex. 0501234567 eller +971501234567).",
+    invalidPhoneSmall: "Ogiltigt nummer. Anvand endast UAE-nummer.",
+    missingPk: "Lagg till NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY i miljoinställningar.",
+    emirates: ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain", "Ras Al Khaimah", "Fujairah"],
+    colors: ["Tra", "Vit", "Svart"],
+  },
+} as const;
 
-const colors = [
-  { id: "wooden", label: "خشبي", bg: "bg-[#7D5A2F]", ring: "ring-[#7D5A2F]" },
-  { id: "white", label: "أبيض", bg: "bg-white border border-accent", ring: "ring-brand/40" },
-  { id: "black", label: "أسود", bg: "bg-[#1C1C1C]", ring: "ring-[#1C1C1C]" },
-];
-
-const trustBadges = [
-  { icon: Truck, title: "شحن مجاني", desc: "داخل الإمارات" },
-  { icon: Shield, title: "ضمان 6 أشهر", desc: "على المنتج" },
-  { icon: CreditCard, title: "دفع آمن", desc: "بطاقة بنكية" },
-];
-
-const emirates = [
-  "أبوظبي",
-  "دبي",
-  "الشارقة",
-  "عجمان",
-  "أم القيوين",
-  "رأس الخيمة",
-  "الفجيرة",
-];
+const colorStyle = [
+  { id: "wooden", bg: "bg-[#7D5A2F]", ring: "ring-[#7D5A2F]" },
+  { id: "white", bg: "bg-white border border-accent", ring: "ring-brand/40" },
+  { id: "black", bg: "bg-[#1C1C1C]", ring: "ring-[#1C1C1C]" },
+] as const;
 
 const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
@@ -141,7 +265,7 @@ function EmbeddedPaymentForm({
     });
 
     if (result.error) {
-      onError(result.error.message ?? "تعذر إتمام الدفع.");
+      onError(result.error.message ?? "Payment failed.");
       setIsPaying(false);
       return;
     }
@@ -209,6 +333,13 @@ export default function ProductInfo({
   selectedColor: string;
   onColorChange: (color: string) => void;
 }) {
+  const { locale } = useLanguage();
+  const text = localized[locale];
+  const features = text.features;
+  const colors = colorStyle.map((style, idx) => ({ ...style, label: text.colors[idx] }));
+  const trustBadges = text.trust;
+  const emirates = text.emirates;
+  const isArabic = locale === "ar";
   const [qty, setQty] = useState(1);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -233,7 +364,7 @@ export default function ProductInfo({
     setShowSuccessPopup(false);
 
     if (!isPhoneValid || !normalizedPhone) {
-      setCheckoutError("رقم الهاتف يجب أن يكون رقمًا إماراتيًا صحيحًا (مثال: 0501234567 أو +971501234567).");
+      setCheckoutError(text.invalidPhone);
       return;
     }
 
@@ -271,18 +402,18 @@ export default function ProductInfo({
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-brand/45">
         <Link href="/" className="hover:text-primary transition-colors">
-          الرئيسية
+          {text.breadcrumb[0]}
         </Link>
         <span>/</span>
-        <span className="text-brand/70">المنتج</span>
+        <span className="text-brand/70">{text.breadcrumb[1]}</span>
         <span>/</span>
-        <span className="text-brand font-medium">استاند ماء فاخر</span>
+        <span className="text-brand font-medium">{text.breadcrumb[2]}</span>
       </nav>
 
       {/* Title block */}
       <div>
         <div className="flex items-center gap-2 justify-end mb-3">
-          <span className="text-brand/45 text-sm">(523 تقييم)</span>
+          <span className="text-brand/45 text-sm">{text.reviews}</span>
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star key={i} size={13} className="text-yellow-400 fill-yellow-400" />
@@ -291,14 +422,13 @@ export default function ProductInfo({
         </div>
 
         <h1 className="text-3xl md:text-4xl font-extrabold text-brand leading-snug mb-3 text-right">
-          استاند ماء فاخر
+          {text.title}
           <br />
-          <span className="text-primary">بتصميم دافئ وإضاءة LED</span>
+          <span className="text-primary">{text.titleAccent}</span>
         </h1>
 
         <p className="text-brand/65 leading-relaxed text-right text-base">
-          تصميم عصري فاخر يخفي قنينة الماء بطريقة أنيقة ويحولها إلى قطعة
-          ديكور راقية تناسب المنازل الحديثة.
+          {text.desc}
         </p>
       </div>
 
@@ -322,8 +452,8 @@ export default function ProductInfo({
           ))}
         </div>
         <div className="text-right flex-1">
-          <p className="text-white font-bold text-sm leading-tight">⚡ عرض محدود الوقت</p>
-          <p className="text-white/75 text-xs mt-0.5">ينتهي العرض قريباً — لا تفوّت الفرصة!</p>
+          <p className="text-white font-bold text-sm leading-tight">{text.countdownTitle}</p>
+          <p className="text-white/75 text-xs mt-0.5">{text.countdownDesc}</p>
         </div>
       </motion.div>
 
@@ -331,7 +461,11 @@ export default function ProductInfo({
       <div className="space-y-3">
         <motion.a
           href={`https://wa.me/971568685828?text=${encodeURIComponent(
-            `مرحباً، أريد طلب ستاند الماء الفاخر - اللون: ${colors.find((c) => c.id === selectedColor)?.label} - الكمية: ${qty}`
+            locale === "ar"
+              ? `مرحبا، أريد طلب ستاند الماء الفاخر - اللون: ${colors.find((c) => c.id === selectedColor)?.label} - الكمية: ${qty}`
+              : locale === "sv"
+              ? `Hej, jag vill bestalla WarmDrop vattenstall - farg: ${colors.find((c) => c.id === selectedColor)?.label} - antal: ${qty}`
+              : `Hello, I want to order the WarmDrop water stand - color: ${colors.find((c) => c.id === selectedColor)?.label} - quantity: ${qty}`
           )}`}
           target="_blank"
           rel="noopener noreferrer"
@@ -340,7 +474,7 @@ export default function ProductInfo({
           className="w-full flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold py-4 rounded-2xl transition-all duration-300 text-base shadow-lg"
         >
           <MessageCircle size={19} />
-          اطلب عبر واتساب
+          {text.whatsapp}
         </motion.a>
 
         <motion.button
@@ -355,19 +489,19 @@ export default function ProductInfo({
           className="w-full flex items-center justify-center gap-3 bg-brand hover:bg-brand-secondary text-white font-bold py-4 rounded-2xl transition-all duration-300 text-base"
         >
           <CreditCardIcon size={19} />
-          دفع بالبطاقة
+          {text.payByCard}
         </motion.button>
       </div>
 
       {/* Price */}
       <div className="flex items-baseline gap-4 justify-end">
         <span className="bg-primary/15 text-primary text-xs font-bold px-3 py-1 rounded-full">
-          خصم 55%
+          {text.discount}
         </span>
         <span className="text-lg text-brand/35 line-through">999 درهم</span>
         <div className="flex items-baseline gap-1.5">
           <span className="text-5xl font-black text-brand leading-none">449</span>
-          <span className="text-brand/60 text-xl">درهم</span>
+          <span className="text-brand/60 text-xl">{text.currency}</span>
         </div>
       </div>
 
@@ -389,7 +523,7 @@ export default function ProductInfo({
           <span className="text-brand/50 text-sm">
             {colors.find((c) => c.id === selectedColor)?.label}
           </span>
-          <span className="text-brand font-semibold text-sm">اللون</span>
+          <span className="text-brand font-semibold text-sm">{text.colorLabel}</span>
         </div>
         <div className="flex gap-3 justify-end">
           {colors.map((color) => (
@@ -416,7 +550,7 @@ export default function ProductInfo({
           <button
             onClick={() => setQty((q) => Math.max(1, q - 1))}
             className="w-7 h-7 rounded-full hover:bg-accent flex items-center justify-center transition-colors"
-            aria-label="تقليل الكمية"
+            aria-label={locale === "ar" ? "تقليل الكمية" : locale === "sv" ? "Minska antal" : "Decrease quantity"}
           >
             <Minus size={13} />
           </button>
@@ -426,12 +560,12 @@ export default function ProductInfo({
           <button
             onClick={() => setQty((q) => q + 1)}
             className="w-7 h-7 rounded-full hover:bg-accent flex items-center justify-center transition-colors"
-            aria-label="زيادة الكمية"
+            aria-label={locale === "ar" ? "زيادة الكمية" : locale === "sv" ? "Oka antal" : "Increase quantity"}
           >
             <Plus size={13} />
           </button>
         </div>
-        <span className="text-brand/45 text-sm">الكمية</span>
+        <span className="text-brand/45 text-sm">{text.quantity}</span>
       </div>
 
       {/* Trust Badges */}
@@ -467,9 +601,9 @@ export default function ProductInfo({
                 ✕
               </button>
               <div className="text-right">
-                <h3 className="text-2xl font-extrabold text-brand">إتمام الدفع</h3>
+                <h3 className="text-2xl font-extrabold text-brand">{text.modalTitle}</h3>
                 <p className="text-brand/60 text-sm mt-1">
-                  أدخل بياناتك وسيتم الدفع داخل الموقع مباشرة
+                  {text.modalSub}
                 </p>
               </div>
             </div>
@@ -478,7 +612,7 @@ export default function ProductInfo({
               <form className="space-y-4" onSubmit={handleCheckoutSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm text-brand/70 font-semibold">الاسم الكامل</label>
+                    <label className="text-sm text-brand/70 font-semibold">{text.fullName}</label>
                     <input
                       required
                       value={formData.name}
@@ -488,7 +622,7 @@ export default function ProductInfo({
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-sm text-brand/70 font-semibold">رقم الهاتف</label>
+                    <label className="text-sm text-brand/70 font-semibold">{text.phone}</label>
                     <input
                       required
                       type="tel"
@@ -505,14 +639,14 @@ export default function ProductInfo({
                     />
                     {formData.phone.length > 0 && !isPhoneValid && (
                       <p className="text-xs text-red-600 text-right">
-                        رقم غير صالح. استخدم رقم إماراتي فقط.
+                        {text.invalidPhoneSmall}
                       </p>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm text-brand/70 font-semibold">البريد الإلكتروني</label>
+                  <label className="text-sm text-brand/70 font-semibold">{text.email}</label>
                   <input
                     required
                     type="email"
@@ -523,7 +657,7 @@ export default function ProductInfo({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm text-brand/70 font-semibold">العنوان</label>
+                  <label className="text-sm text-brand/70 font-semibold">{text.address}</label>
                   <input
                     required
                     value={formData.address}
@@ -533,14 +667,14 @@ export default function ProductInfo({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm text-brand/70 font-semibold">الإمارة</label>
+                  <label className="text-sm text-brand/70 font-semibold">{text.emirate}</label>
                   <select
                     required
                     value={formData.emirate}
                     onChange={(e) => setFormData((p) => ({ ...p, emirate: e.target.value }))}
                     className="w-full rounded-xl border border-accent/60 bg-white px-4 py-3 text-brand outline-none focus:ring-2 focus:ring-primary/30"
                   >
-                    <option value="">اختر الإمارة</option>
+                    <option value="">{text.chooseEmirate}</option>
                     {emirates.map((emirate) => (
                       <option key={emirate} value={emirate}>
                         {emirate}
@@ -551,7 +685,7 @@ export default function ProductInfo({
 
                 <div className="rounded-2xl bg-primary/10 border border-primary/20 p-4 text-right">
                   <p className="text-sm font-semibold text-brand">
-                    أدخل بيانات البطاقة مباشرة لإتمام الدفع داخل الموقع بدون تحويل.
+                    {text.cardInfo}
                   </p>
                 </div>
 
@@ -559,7 +693,7 @@ export default function ProductInfo({
 
                 {!stripePromise && (
                   <p className="text-red-600 text-sm text-right">
-                    أضف NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY في ملف البيئة لتفعيل الدفع داخل الموقع.
+                    {text.missingPk}
                   </p>
                 )}
 
@@ -573,12 +707,12 @@ export default function ProductInfo({
                   {isSubmitting ? (
                     <>
                       <Loader2 size={18} className="animate-spin" />
-                      جاري تجهيز الدفع...
+                      {text.preparing}
                     </>
                   ) : (
                     <>
                       <CreditCardIcon size={19} />
-                      متابعة الدفع
+                      {text.continuePayment}
                     </>
                   )}
                 </motion.button>
@@ -587,7 +721,7 @@ export default function ProductInfo({
               <div className="space-y-4">
                 <div className="rounded-2xl bg-primary/10 border border-primary/20 p-4 text-right">
                   <p className="text-sm font-semibold text-brand">
-                    أكمل بيانات البطاقة مباشرة من داخل الموقع.
+                    {text.cardStepTitle}
                   </p>
                 </div>
 
@@ -599,7 +733,7 @@ export default function ProductInfo({
                   }}
                   className="text-sm text-brand/70 hover:text-brand transition-colors"
                 >
-                  تعديل بيانات العميل
+                  {text.editCustomer}
                 </button>
 
                 <Elements
@@ -637,16 +771,16 @@ export default function ProductInfo({
       {showSuccessPopup && (
         <div className="fixed inset-0 z-[95] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-md border border-accent/40 shadow-2xl p-7 text-right">
-            <h3 className="text-2xl font-extrabold text-brand">تم الدفع بنجاح</h3>
+            <h3 className="text-2xl font-extrabold text-brand">{text.successTitle}</h3>
             <p className="text-brand/70 mt-3 leading-relaxed">
-              تم إرسال إيميل التأكيد بنجاح. شكرا لطلبك، وسيتم التواصل معك قريبًا.
+              {text.successText}
             </p>
             <button
               type="button"
               onClick={() => setShowSuccessPopup(false)}
               className="mt-6 w-full bg-brand hover:bg-brand-secondary text-white font-bold py-3 rounded-2xl transition-colors"
             >
-              ممتاز
+              {text.great}
             </button>
           </div>
         </div>

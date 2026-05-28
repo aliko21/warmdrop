@@ -5,19 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Menu, X } from "lucide-react";
-
-const navLinks = [
-  { label: "الرئيسية", href: "/" },
-  { label: "المنتج", href: "/product" },
-  { label: "المميزات", href: "/#features" },
-  { label: "آراء العملاء", href: "/#reviews" },
-  { label: "اتصل بنا", href: "/#contact" },
-];
+import { useLanguage } from "@/components/LanguageProvider";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { label: String(t("nav.home")), href: "/" },
+    { label: String(t("nav.product")), href: "/product" },
+    { label: String(t("nav.features")), href: "/#features" },
+    { label: String(t("nav.reviews")), href: "/#reviews" },
+    { label: String(t("nav.contact")), href: "/#contact" },
+  ];
 
   // الصفحة الرئيسية لها Hero داكن → نص أبيض عند الأعلى
   // باقي الصفحات لها خلفية فاتحة → نص داكن دائماً
@@ -85,19 +88,20 @@ export default function Navbar() {
 
         {/* CTA + Mobile toggle */}
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <Link
             href="/product"
             className="hidden md:flex items-center gap-2 bg-primary hover:bg-primary-dark text-white text-sm font-bold px-6 py-2.5 rounded-full transition-all duration-300 hover:shadow-glow hover:scale-105"
           >
             <ShoppingCart size={15} />
-            اطلب الآن
+            {String(t("nav.orderNow"))}
           </Link>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className={`md:hidden p-2 transition-colors ${
               useDarkText ? "text-brand" : "text-white"
             }`}
-            aria-label="القائمة"
+            aria-label={String(t("nav.menu"))}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -133,7 +137,7 @@ export default function Navbar() {
                   className="flex items-center justify-center gap-2 bg-primary text-white font-bold py-3 rounded-full mt-2"
                 >
                   <ShoppingCart size={16} />
-                  اطلب الآن
+                  {String(t("nav.orderNow"))}
                 </Link>
               </li>
             </ul>
