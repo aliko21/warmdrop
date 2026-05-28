@@ -8,7 +8,7 @@ if (!stripeSecretKey) {
 }
 
 const stripe = new Stripe(stripeSecretKey ?? "", {
-  apiVersion: "2026-04-22.dahlia",
+  apiVersion: "2025-04-30.basil",
 });
 
 type CheckoutPayload = {
