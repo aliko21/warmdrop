@@ -51,10 +51,16 @@ const emirates = [
 const stripePublishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
-const uaePhonePattern = /^(?:\+971|00971|0)?5[024568]\d{7}$/;
+const uaePhonePattern = /^(?:\+971|00971|0)?5\d{8}$/;
+
+function normalizeDigits(input: string) {
+  return input
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+}
 
 function normalizeUaePhone(phone: string) {
-  const cleaned = phone.replace(/\s+/g, "");
+  const cleaned = normalizeDigits(phone).replace(/\s+/g, "");
   if (!uaePhonePattern.test(cleaned)) return null;
 
   if (cleaned.startsWith("+971")) return cleaned;
@@ -485,15 +491,14 @@ export default function ProductInfo({
                     <label className="text-sm text-brand/70 font-semibold">رقم الهاتف</label>
                     <input
                       required
+                      type="tel"
                       inputMode="tel"
                       placeholder="0501234567"
-                      pattern="^(?:\\+971|00971|0)?5[024568]\\d{7}$"
-                      title="أدخل رقم إماراتي صحيح مثل 0501234567 أو +971501234567"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData((p) => ({
                           ...p,
-                          phone: e.target.value.replace(/[^\d+]/g, ""),
+                          phone: normalizeDigits(e.target.value).replace(/[^\d+]/g, ""),
                         }))
                       }
                       className="w-full rounded-xl border border-accent/60 bg-white px-4 py-3 text-brand outline-none focus:ring-2 focus:ring-primary/30"
