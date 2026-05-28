@@ -12,7 +12,6 @@ const stripe = new Stripe(stripeSecretKey ?? "");
 
 
 
-
 type CheckoutPayload = {
   qty: number;
   color: string;
@@ -25,8 +24,14 @@ type CheckoutPayload = {
 
 const uaePhonePattern = /^(?:\+971|00971|0)?5\d{8}$/;
 
+function normalizeDigits(input: string) {
+  return input
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 1632))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 1776));
+}
+
 function normalizeUaePhone(phone: string) {
-  const cleaned = phone.replace(/\s+/g, "");
+  const cleaned = normalizeDigits(phone).replace(/\s+/g, "");
   if (!uaePhonePattern.test(cleaned)) return null;
 
   if (cleaned.startsWith("+971")) return cleaned;
