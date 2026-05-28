@@ -7,9 +7,7 @@ if (!stripeSecretKey) {
   console.warn("Missing STRIPE_SECRET_KEY environment variable.");
 }
 
-const stripe = new Stripe(stripeSecretKey ?? "", {
-  apiVersion: "2025-04-30.basil",
-});
+const stripe = new Stripe(stripeSecretKey ?? "");
 
 type CheckoutPayload = {
   qty: number;
