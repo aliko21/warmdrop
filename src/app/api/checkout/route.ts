@@ -23,7 +23,7 @@ type CheckoutPayload = {
   emirate: string;
 };
 
-const uaePhonePattern = /^(?:\+971|00971|0)?5[024568]\d{7}$/;
+const uaePhonePattern = /^(?:\+971|00971|0)?5\d{8}$/;
 
 function normalizeUaePhone(phone: string) {
   const cleaned = phone.replace(/\s+/g, "");
