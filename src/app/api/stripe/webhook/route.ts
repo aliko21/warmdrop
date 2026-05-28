@@ -9,7 +9,7 @@ const orderNotificationEmail = process.env.ORDER_NOTIFICATION_EMAIL || "rooteone
 const orderNotificationFrom = process.env.ORDER_NOTIFICATION_FROM || "WarmDrop <onboarding@resend.dev>";
 
 const stripe = new Stripe(stripeSecretKey ?? "", {
-  apiVersion: "2026-04-22.dahlia",
+  apiVersion: "2026-05-27.dahlia",
 });
 
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
